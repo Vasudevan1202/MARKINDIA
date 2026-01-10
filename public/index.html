@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MarkIndia – Local Marketplace</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo">MarkIndia</div>
+    <div class="tagline">The fastest way to buy and sell locally</div>
+
+    <button
+      id="logoutBtn"
+      onclick="logout()"
+      style="display:none; width:auto; padding:8px 16px; margin:10px auto;
+             font-size:14px; background:#ef4444; color:white;
+             border-radius:8px; border:none; cursor:pointer;">
+      Logout
+    </button>
+  </div>
+
+  <!-- MAIN -->
+  <div class="container">
+
+    <!-- AUTH CARD -->
+    <div class="post-ad">
+      <h2 id="authTitle">Login</h2>
+
+      <input type="email" id="email" placeholder="Email Address" />
+      <input type="password" id="password" placeholder="Password" />
+
+      <div id="loginActions">
+        <button type="button" onclick="login()">Login</button>
+        <p style="text-align:center; font-size:14px; margin-top:10px;">
+          Don't have an account?
+          <a href="#" onclick="toggleAuth(true)" style="color:#22c55e;">Sign Up</a>
+        </p>
+      </div>
+
+      <div id="signupActions" style="display:none;">
+        <input type="text" id="fullName" placeholder="Full Name" />
+        <input type="tel" id="phoneNumber" placeholder="Phone Number" />
+        <input type="password" id="confirmPassword" placeholder="Confirm Password" />
+
+        <button type="button" onclick="signup()">Sign Up</button>
+
+        <p style="text-align:center; font-size:14px; margin-top:10px;">
+          Already have an account?
+          <a href="#" onclick="toggleAuth(false)" style="color:#22c55e;">Login</a>
+        </p>
+      </div>
+    </div>
+
+    <!-- POST AD (HIDDEN UNTIL LOGIN) -->
+    <div class="post-ad" id="postSection" style="display:none;">
+      <h2>Post a New Ad</h2>
+
+      <input type="text" id="title" placeholder="What are you selling?" />
+      <input type="number" id="price" placeholder="Price (₹)" />
+      <textarea id="description" placeholder="Describe your item..."></textarea>
+
+      <!-- CATEGORY -->
+      <select id="category">
+        <option value="">Select Category</option>
+        <option value="Electronics">Electronics</option>
+        <option value="Vehicles">Vehicles</option>
+        <option value="Furniture">Furniture</option>
+        <option value="Jobs">Jobs</option>
+        <option value="Others">Others</option>
+      </select>
+
+      <!-- LOCATION -->
+      <input
+        type="text"
+        id="location"
+        placeholder="Location (City / Area)"
+      />
+
+      <!-- IMAGE UPLOAD -->
+      <div class="image-upload" style="margin-bottom:15px;">
+        <label style="display:block; margin-bottom:5px; font-size:14px; opacity:.8;">
+          Add Photos (1–3 images):
+        </label>
+
+        <input
+          type="file"
+          id="imageInput"
+          accept="image/*"
+          multiple
+          style="font-size:12px; padding:8px;"
+          onchange="previewImages()"
+        />
+
+        <div
+          id="imagePreview"
+          style="display:flex; gap:8px; margin-top:10px; overflow-x:auto;">
+        </div>
+      </div>
+
+      <button type="button" id="postAdBtn" onclick="postAd()">Post Ad</button>
+      <div id="successMsg" class="success-msg"></div>
+    </div>
+
+    <!-- SEARCH & SORT -->
+    <div class="search-sort" style="margin-bottom:20px;">
+      <input type="text" id="searchInput" placeholder="Search ads..." oninput="filterAndSortAds()" style="margin-bottom:10px;" />
+      <div style="display:flex; gap:10px;">
+        <select id="sortSelect" onchange="filterAndSortAds()" style="margin-bottom:0;">
+          <option value="latest">Latest</option>
+          <option value="priceLowHigh">Price: Low to High</option>
+          <option value="priceHighLow">Price: High to Low</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- CATEGORY + MY ADS FILTER -->
+    <div class="ads-filter" style="margin-bottom:20px; text-align:center;">
+      <div style="display:flex; gap:8px; overflow-x:auto; justify-content:center; margin-bottom:10px; padding: 5px;">
+        <button class="cat-btn active" onclick="filterByCategory('', event)">All</button>
+        <button class="cat-btn" onclick="filterByCategory('Electronics', event)">Electronics</button>
+        <button class="cat-btn" onclick="filterByCategory('Vehicles', event)">Vehicles</button>
+        <button class="cat-btn" onclick="filterByCategory('Furniture', event)">Furniture</button>
+        <button class="cat-btn" onclick="filterByCategory('Jobs', event)">Jobs</button>
+        <button class="cat-btn" onclick="filterByCategory('Others', event)">Others</button>
+      </div>
+
+      <div style="margin-top: 10px;">
+        <button id="showAllAds" onclick="filterAds('all')" style="width: auto; padding: 10px 20px; margin-right: 5px;">All Ads</button>
+        <button id="showMyAds" onclick="filterAds('mine')" style="width: auto; padding: 10px 20px; margin-right: 5px;">My Ads</button>
+        <button id="showFavAds" onclick="filterAds('fav')" style="width: auto; padding: 10px 20px;">Favorites</button>
+      </div>
+    </div>
+
+    <!-- ADS LIST -->
+    <div id="ads" class="ads">
+      <p style="text-align:center; opacity:0.6;">Loading ads…</p>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    © 2026 MarkIndia. All rights reserved.
+  </div>
+
+  <!-- FIREBASE COMPAT SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+
+  <!-- YOUR FILES -->
+  <script src="firebase-config.js"></script>
+  <script src="script.js"></script>
+
+</body>
+  </html>
